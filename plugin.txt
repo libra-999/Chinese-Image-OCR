@@ -1,0 +1,5 @@
+paddleocr  #interface , but it need to used  
+fastapi 
+uvicorn 
+python-multipart
+paddlepaddle #execute engine
