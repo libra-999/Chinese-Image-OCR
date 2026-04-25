@@ -1,5 +1,6 @@
-paddleocr  #interface , but it need to used  
 fastapi 
 uvicorn 
 python-multipart
-paddlepaddle #execute engine
+paddleocr  #interface , but it need to used  (support only window or linux)
+paddlepaddle #execute engine (support only window or linux)
+easyocr # more suitable config and support all os 

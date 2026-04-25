@@ -1,2 +1,7 @@
 # PRACTICE OCR IMAGE DETECTION WITH PADDLE 
 The purpose of this project , just for learn the process of ocr detect on image that specific on card Identity or passport. The card Identity or passport must have pixel around 1200 * 1200 , because I cannot train more size on computer that doesn't computer trained model and we decided to use library from `PADDLE` , this library is build from chinese developer that I can detect object or text from voice. But I have some issue with language `(KH)` , because they dont have language KH so some image from that have khmer word cannot detect them perfectly.
+
+`OCR LIBRARY`
+* paddleocr 
+* easyocr
+* tesseract (but required to have own engine on device)
