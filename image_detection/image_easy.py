@@ -1,9 +1,8 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 import numpy as np
-from PIL import Image, ImageEnhance
 import easyocr
-import re
-from util import chinese_name
+from util.regex  import *
+from util.response import *
 
 app = FastAPI()
 reader = easyocr.Reader(
@@ -11,45 +10,6 @@ reader = easyocr.Reader(
     gpu=False, # no need support on Mac, khmer language does not support in EasyOCR
 )  
 
-## response RestFull
-def resp_ocr():
-    return {
-        "nameZh": "",
-        "nameEn": "",
-        "genderZh": "",
-        "genderEn": "",
-        "dob": "",
-        "nationalityZh": "",
-        "nationalityEn": "",
-        "idNumber": "",
-        "passportNumber": "",
-        "validFrom": "",
-        "validTo": "",
-        "issueDate": "",
-        "address": ""
-    }
-    
-## Country Mode
-def detect_country (text: str):
-    t = text.upper()
-    if "TAIWAN" in t or "ARC" in t:
-        return "TW"
-    if "HONGKONG" in t or "HONG KONG" in t:
-        return "HK"
-    if "SINGAPOR" in t  or "PASSPORT" in t:
-        return "SG"
-    if "CAN" in  t:
-        return "CN"
-    return 'UNKNOWN'
-
-## check regex
-def first_match(pattern, text):
-    m = re.search(pattern, text, re.I)
-    return m.group(1) if m else ""
-
-## date format
-def date_format(text):
-    return re.findall(r'(?:19|20)\d{2}[./-]\d{2}[./-]\d{2}', text)
 
 ## parse fields
 def parse(country, text):
@@ -78,6 +38,8 @@ async def recognize(file: UploadFile = File(...)):
         paragraph=False,
         )
     # print(results)
+    
+    print(results)
     texts = [res[1] for res in results]
     raw_text = " ".join(texts)
     country = detect_country(raw_text)
