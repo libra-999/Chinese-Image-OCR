@@ -4,15 +4,3 @@ python-multipart
 paddleocr  #interface , but it need to used  (support only window or linux)
 paddlepaddle #execute engine (support only window or linux)
 easyocr # more suitable config and support all os 
-
-1 Taiwan
-Result: ['中 華 民 國 居 留 證', 'R.O.C.(Taiwan) Resident Certificate', 'ARC', '外僑居8証', 'MuLTIPlE RE EMT', '市朋務站', '111/_;', '411+', '900000016', '?emae', '挨須', 'T', 'THIRTY', '041S', '', 'i口uI}ilof', 'dl+Moili1', '2000/05/01', '馬來西亞', '店趵印邛 Dats', '11011', 'lM]', '叫號冑', '2021/05/01', 'p2', '000501', '目出弔由 Fumu', 'i11', ';學-國立夭大學', ',#址 Htsio', '9696500340', '北市中1i婪國西路100%1樓', '01000152', '001']
-
-2. Hong Kong
-Result: ['香港永久性居民身份證', '', 'HONG KONG PERlAMENTIDENTITY CARD', '樂永 晴', '0|', 'Wing', 'Ching', '', '2867', '3057', '2532', '出生日i Daie oiBirn', '', '03-06-1985', '+++H1', '石謚日典 Daieoflssut', '(06-96)', ';', '26-11-18', '1683365(5)']
-
-3. China
-Result: ['莊名| liame', 'ZHEMGJIAW,', 'YAMGBEN', '証件樣本', '性8', '出生日期| Dala oi Birh', '女|F', '1981.08.03', '罔錯', 'Malenall}', '加拿大 CAN', '有茹期撥1 Penod ofWalidiy', '2023.09.15', '2033.09.14', '迂忤號尹{hio', '911124198108030024']
-
-4. Singapor
-Result: ['PASSPORT', 'REPUBLIC OFSINGAPORE', 'Iype', 'Lhuntry Cidt', 'Fasspurtilu', 'SGP', 'X20004441!', '1口1', 'LINbA NG ZEE ZEE', 'Stx', 'Maffomalit', 'SIMGHP0RE', 'C1T11El4', 'Llifun[liffth', 'Hlart', '1', '儿UN', '1977', 'S1MGiPORE', ']84', '=', '皿alt ul tixpir', 'AU6 2005', 'AU6 2010', 'llddilicifioms', '=11', 'SEE', 'PHGE', 'MIN1STR/', 'OF HOIE AFFHIRS', '111,1131111', '$7788888#', 'PASGPMG<<LIMDA<LEE<LEE<<<<<<<<<<<<<<<<<<<<<<', 'X200044414$6P7706275F1008232$7788888#<<<<<96']

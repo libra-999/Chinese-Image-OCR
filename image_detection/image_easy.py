@@ -3,6 +3,7 @@ import numpy as np
 from PIL import Image, ImageEnhance
 import easyocr
 import re
+from util import chinese_name
 
 app = FastAPI()
 reader = easyocr.Reader(
@@ -26,8 +27,8 @@ def resp_ocr():
         "validTo": "",
         "issueDate": "",
         "address": ""
-
     }
+    
 ## Country Mode
 def detect_country (text: str):
     t = text.upper()
@@ -41,32 +42,29 @@ def detect_country (text: str):
         return "CN"
     return 'UNKNOWN'
 
+## check regex
 def first_match(pattern, text):
     m = re.search(pattern, text, re.I)
     return m.group(1) if m else ""
 
+## date format
 def date_format(text):
     return re.findall(r'(?:19|20)\d{2}[./-]\d{2}[./-]\d{2}', text)
 
+## parse fields
 def parse(country, text):
     f = resp_ocr()
     if country == "CN":
-        ds = date_format(text)
+        f["nameZh"] = chinese_name(text)
         f["nameEn"] = first_match(r'([A-Z]{4,},?\s+[A-Z]{4,})', text)
-        f["genderZh"] = first_match(r'(男|女)', text)
-        f["genderEn"] = first_match(r'\b(M|F)\b', text)
-        f["dob"] = ds[0] if len(ds) > 0 else ""
-        f["validFrom"] = ds[1] if len(ds) > 1 else ""
-        f["validTo"] = ds[2] if len(ds) > 2 else ""
-        f["idNumber"] = first_match(r'(\d{18})', text)
-        f["nationalityZh"] = first_match(r'(加拿大|中國|美國)', text)
-        f["nationalityEn"] = first_match(r'\b(CAN|CHN|USA)\b', text)
-
     elif country == "HK":
-        f["nameEn"] = first_match(r'(Wing\s+Ching)', text)
-        f["dob"] = first_match(r'(\d{2}-\d{2}-\d{4})', text)
-        f["issueDate"] = first_match(r'(\d{2}-\d{2}-\d{2})', text)
-        f["idNumber"] = first_match(r'(\d{7}\(\d\))', text)
+        f["nameEn"] = first_match(r'([A-Z]{4,},?\s+[A-Z]{4,})', text)
+        f["nameZh"] = chinese_name(text)
+    elif country == "TW":
+        f["nameZh"] = chinese_name(text)
+        f["nameEn"] = first_match(r'([A-Z]{4,},?\s+[A-Z]{4,})', text)
+    elif country == "SG":
+        f["nameEn"] = first_match(r'([A-Z]{4,},?\s+[A-Z]{4,})', text)
     return f
 
 
@@ -84,11 +82,11 @@ async def recognize(file: UploadFile = File(...)):
     raw_text = " ".join(texts)
     country = detect_country(raw_text)
     fields = parse(country,raw_text)
+    
     return {
         "success": True,
         "rawText": texts,
         "country": country,
         "fields": fields
     }
-    
     
