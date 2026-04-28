@@ -26,7 +26,7 @@ def tw_card(text, box, fields):
     
     # ID Card
     for t in box:
-        if re.fullmatch(r'[A-Z]\d{7}', t):
+        if re.fullmatch(r'[A-Z][A-Z]\d{7,10}', t):
             fields["idNumber"] = t
             break
         
