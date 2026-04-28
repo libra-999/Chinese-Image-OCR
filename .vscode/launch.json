@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug",
+            "type": "python",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "image_detection.image_easy:app",
+                "--port",
+                "7003"
+            ],
+            "jinja": true
+        }
+    ]
+}

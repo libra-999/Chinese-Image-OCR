@@ -1,0 +1,9 @@
+fastapi 
+uvicorn 
+python-multipart
+EasyOCR
+OpenCV
+Regex
+RapidFuzz
+NumPy
+Pillow

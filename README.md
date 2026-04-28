@@ -5,3 +5,12 @@ The purpose of this project , just for learn the process of ocr detect on image 
 * paddleocr 
 * easyocr
 * tesseract (but required to have own engine on device)
+
+## FLOW
+* Preprocess
+* OCR
+* Confidence filter
+* Country detect
+* Field parsing
+* Regex validation
+* Structure JSON
