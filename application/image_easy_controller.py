@@ -4,7 +4,7 @@ import easyocr
 from PIL import Image
 from util.regex  import detect_country
 from util.response import resp_ocr ,httpResp
-from service import easy_service
+from service.easy_service import parseData
 import cv2
 
 app = FastAPI()
@@ -64,7 +64,7 @@ async def recognize(file: UploadFile = File(...)):
 
         raw_text = " ".join(texts)
         country = detect_country(raw_text)
-        fields = easy_service(country,raw_text,boxes)            
+        fields = parseData(country,raw_text,boxes)            
 
         return httpResp(200,"Succeed",resp_ocr(country,fields,boxes))
 

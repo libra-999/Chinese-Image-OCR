@@ -7,7 +7,7 @@
             "request": "launch",
             "module": "uvicorn",
             "args": [
-                "image_detection.image_easy:app",
+                "application.image_easy_controller:app",
                 "--port",
                 "7003"
             ],
