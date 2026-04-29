@@ -22,7 +22,7 @@ async def recognize(file: UploadFile = File(...)):
         h, w = gray.shape
         
         print(f"Height: {h}, Width: {w}")
-        target_width =  1200 if w < 1200 else w
+        target_width =  1300 if w < 1800 else w
         scale = target_width / w if w < target_width else 1   
         gray = cv2.resize(gray, (int(w * scale), int(h * scale)), interpolation=cv2.INTER_CUBIC)
         
