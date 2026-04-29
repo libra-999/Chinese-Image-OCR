@@ -1,4 +1,5 @@
 import re
+from datetime import datetime
 
 # Country Mode
 def detect_country (text: str):
@@ -13,6 +14,35 @@ def detect_country (text: str):
         return "CN"
     return 'UNKNOWN'
 
+# fullmatch check 
+def match_text_with_box(regex, box_text , standard_text ) :
+    if re.fullmatch(regex , box_text):
+        if box_text in standard_text:
+            return box_text
+    return ""
+
+# date format
+def date_time_format(date) :
+    if not date:
+        return ""
+    
+    date = date.strip() # like a trim()
+    date = re.sub(r'\s+', '',date)
+    date  = date.replace(".","-").replace("/","-")
+    
+    formats = [
+        "%Y-%m-%d", # 2022-12-19
+        "%d-%m-%Y", # 19-12-2022
+        "%d-%m-%y", # 19-12-22
+    ]
+    for fmt in formats:
+        try:
+            parsed = datetime.strptime(date, fmt)
+            return parsed.strftime("%d-%m-%Y")
+        except ValueError:
+            continue
+    return date
+    
 # messy data after ocr
 def chinese_name_filter (text) -> str:
     words =  re.findall(r'[\u4e00-\u9fff]{2,6}',text)
