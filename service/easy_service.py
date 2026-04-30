@@ -68,12 +68,12 @@ def tw_card(text, box, fields):
     fields = field_date(box, fields)
     fields = field_gender(box,fields)
     
+    fields["nationality"] = "TW"
     for t in box:
         match = re.search(r'(?:[A-Z]{3}|[\u4e00-\u9fff]{2,4})',t,re.I)
-        if match in text :
-            fields["nationality"] = match
-        else :
-            fields["nationality"] = "TW"
+        if match:
+            fields["nationality"] = match.group(0).upper()
+            break
             
     return fields
 
@@ -102,12 +102,12 @@ def ch_card(text, box, fields):
     fields = field_date(box, fields)
     fields = field_gender(box, fields)
  
+    fields["nationality"] = "CN"
     for t in box:
         match = re.search(r'(?:[A-Z]{3}|[\u4e00-\u9fff]{2,4})',t,re.I)
-        if match in text :
-            fields["nationality"] = match
-        else :
-            fields["nationality"] = "CN"
+        if match :
+            fields["nationality"] = match.group(0).upper()
+            break
     return fields
 
 # Singapor
@@ -133,13 +133,12 @@ def sg_card(text, box, fields):
     fields = field_date(box,fields)   
     fields = field_gender(box,fields)
     
+    fields["nationality"] = "SG"
     for t in box:
         match = re.search(r'(?:[A-Z]{3}|[\u4e00-\u9fff]{2,4})',t,re.I)
-        if match in text :
-            fields["nationality"] = match
-        else :
-            fields["nationality"] = "SG"
-            
+        if match:
+            fields["nationality"] = match.group(0).upper()
+            break
     return fields
 
 #Hong Kong
@@ -166,10 +165,10 @@ def hk_card(text,box, fields):
     fields = field_date(box, fields)
     fields = field_gender(box,fields)    
             
+    fields["nationality"] = "HK"        
     for t in box:
         match = re.search(r'(?:[A-Z]{3}|[\u4e00-\u9fff]{2,4})',t,re.I)
-        if match in text :
-            fields["nationality"] = match
-        else :
-            fields["nationality"] = "HK"
+        if match :
+            fields["nationality"] = match.group(0).upper()
+            break
     return fields
