@@ -1,7 +1,6 @@
 import re
 from model.easy_ocr import ocr_data
-import json
-from util.regex import chinese_name_filter, english_name_filter, match_text_with_box , date_time_format
+from util.regex import match_text_with_box , date_time_format
 
 def parseData(country, text, boxes):
     f = ocr_data.copy()
@@ -26,13 +25,11 @@ def field_date (box, fields):
         dob_match = re.findall(r'\b(?:\d{4}|\d{2})[./-]\d{2}[./-](?:\d{4}|\d{2})\b',t)
         date.extend(dob_match)
 
-    print(json.dumps(date))
     if len(date) >=1 :
         fields["dob"] = date_time_format(date[0])
     if len(date) >= 2 :
         fields["validFrom"] = date_time_format(date[1])
     if len(date) >= 3:
-        fields["validFrom"] = date_time_format(date[3])
         fields["validTo"] = date_time_format(date[2])
     return fields
 
@@ -49,49 +46,35 @@ def field_gender (box, fields):
 
 # Taiwin
 def tw_card(text, box, fields):
-    fields["nameEn"] =  chinese_name_filter(text)
-    fields["nameZh"] = english_name_filter(text)
     
-
-    # ID Card
+    for t in box:
+        match =  match_text_with_box(r'([\u4e00-\u9fff]+)*', t,text)
+        if match :
+            fields["nameZh"] = match
+            break
+        
+    for t in box:
+        match =  match_text_with_box(r'^[A-Z]+(?:\s+[A-Z]+)+$', t, text)
+        # match = re.search(r'[A-Z]+\s([A-Z]+)*')
+        if match :
+            fields["nameEn"] = match
+            break   
+    
     for t in box:
         if re.fullmatch(r'[A-Z][A-Z]\d{7,10}', t):
             fields["idNumber"] = t
             break
     
-        
-    dates = re.findall(r'(?:19|20)\d{2}[./-]\d{2}[./-]\d{2}', text)
-    if len(dates) >= 1:
-        fields["dob"] = dates[0]
-    if len(dates) >= 3:
-        fields["validFrom"] = dates[1]
-        fields["validTo"] = dates[2]
-    elif len(dates) == 2:
-        fields["validFrom"] = dates[0]
-        fields["validTo"] = dates[1]
-        
-    nat_match = re.search(r'\b[A-Z]{3}\b', text)
-    if nat_match:
-        fields["nationality"] = nat_match.group()
-    if re.search(r'\bF\b|Female', text, re.I):
-        fields["gender"] = "F"
-    elif re.search(r'\bM\b|Male', text, re.I):
-        fields["gender"] = "M"
+    fields = field_date(box, fields)
+    fields = field_gender(box,fields)
     
-    # national 
     for t in box:
-        if re.fullmatch(r'[A-Z]{3}',t):
-            fields["nationality"] = t
-            break
-    # gender
-    for t in box:
-        if t.upper() in ["F","Female","FEMALE"]:
-            fields["gender"] = "F"
-            break
-        elif t.upper() in ["M","MALE","Male"]:
-            fields["gender"] = "M"
-            break
-        
+        match = re.search(r'(?:[A-Z]{3}|[\u4e00-\u9fff]{2,4})',t,re.I)
+        if match in text :
+            fields["nationality"] = match
+        else :
+            fields["nationality"] = "TW"
+            
     return fields
 
 # China Simplified
@@ -118,14 +101,13 @@ def ch_card(text, box, fields):
         
     fields = field_date(box, fields)
     fields = field_gender(box, fields)
-
+ 
     for t in box:
-        if re.fullmatch(r'[A-Z]{3}',t):
-            fields["nationality"] = t
-            break
-    
-    fields["nationality"] = "Chinese"    
-        
+        match = re.search(r'(?:[A-Z]{3}|[\u4e00-\u9fff]{2,4})',t,re.I)
+        if match in text :
+            fields["nationality"] = match
+        else :
+            fields["nationality"] = "CN"
     return fields
 
 # Singapor
@@ -150,7 +132,14 @@ def sg_card(text, box, fields):
         
     fields = field_date(box,fields)   
     fields = field_gender(box,fields)
-    fields["nationality"] = "Singapor"
+    
+    for t in box:
+        match = re.search(r'(?:[A-Z]{3}|[\u4e00-\u9fff]{2,4})',t,re.I)
+        if match in text :
+            fields["nationality"] = match
+        else :
+            fields["nationality"] = "SG"
+            
     return fields
 
 #Hong Kong
@@ -177,5 +166,10 @@ def hk_card(text,box, fields):
     fields = field_date(box, fields)
     fields = field_gender(box,fields)    
             
-    fields["nationality"] = "HongKong"
+    for t in box:
+        match = re.search(r'(?:[A-Z]{3}|[\u4e00-\u9fff]{2,4})',t,re.I)
+        if match in text :
+            fields["nationality"] = match
+        else :
+            fields["nationality"] = "HK"
     return fields

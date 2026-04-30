@@ -6,10 +6,10 @@ from util.response import resp_ocr ,httpResp
 from service.easy_service import parseData
 import cv2
 from config.ocr_config import ocr_engin, get_reader
-import json
 
 app = FastAPI()
 @app.post("/ocr/services")
+
 async def recognize(file: UploadFile = File(...)):
     try:
         image = Image.open(file.file).convert("RGB")
@@ -17,18 +17,22 @@ async def recognize(file: UploadFile = File(...)):
 
         img_np = cv2.cvtColor(img_np, cv2.COLOR_RGB2BGR)
         gray = cv2.cvtColor(img_np, cv2.COLOR_BGR2GRAY)
-
-        # resize text to bigger
-        h, w = gray.shape
+        h, w = gray.shape     
+           
+        # improve color contrast for dark image
+        mean = gray.mean()
+        if mean < 90:            
+            clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8.8))
+            gray = clahe.apply(gray)
         
-        print(f"Height: {h}, Width: {w}")
-        target_width =  1300 if w < 1800 else w
-        scale = target_width / w if w < target_width else 1   
+        # improve scale image if it have small width
+        if w < 1200:
+            scale =  2.0
+        elif w < 1800:
+            scale =  1.3
+        else :
+            scale = 1.0
         gray = cv2.resize(gray, (int(w * scale), int(h * scale)), interpolation=cv2.INTER_CUBIC)
-        
-        new_h , new_w =  gray.shape
-        print(f"After Height: {new_h}, Width: {new_w}")
-        # gray = cv2.GaussianBlur(gray, (3, 3), 0) # little nosie after scale 
         
         # switch ocr lang by following country
         raw_text, boxes = ocr_engin(gray, get_reader("simplified"))
@@ -40,7 +44,6 @@ async def recognize(file: UploadFile = File(...)):
             raw_text , boxes  = ocr_engin(gray, get_reader("latin"))
             country = detect_country(raw_text) 
             
-        # print("Output:" , json.dumps(raw_text))
         fields = parseData(country,raw_text,boxes)            
         return httpResp(200,"Succeed",resp_ocr(country,fields,boxes))
 
