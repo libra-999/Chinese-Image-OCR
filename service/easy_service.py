@@ -1,10 +1,10 @@
 import re
 from model.easy_ocr import ocr_data
-from util.regex import match_text_with_box , date_time_format
+from util.regex import match_text_with_box , date_time_format, convert_to_date
 
-def parseData(country, text, boxes):
+def parseData(country, text, boxes):    
     f = ocr_data.copy()
-    
+
     # map to text in box methods 
     boxes_text = [ b["text"].strip() for b in boxes if b["text"].strip() ]
     
@@ -26,11 +26,11 @@ def field_date (box, fields):
         date.extend(dob_match)
 
     if len(date) >=1 :
-        fields["dob"] = date_time_format(date[0])
+        fields["dob"] = convert_to_date(date_time_format(date[0]))
     if len(date) >= 2 :
-        fields["validFrom"] = date_time_format(date[1])
+        fields["validFrom"] = convert_to_date(date_time_format(date[1]))
     if len(date) >= 3:
-        fields["validTo"] = date_time_format(date[2])
+        fields["validTo"] = convert_to_date(date_time_format(date[2]))
     return fields
 
 # gender with same format
@@ -55,7 +55,6 @@ def tw_card(text, box, fields):
         
     for t in box:
         match =  match_text_with_box(r'^[A-Z]+(?:\s+[A-Z]+)+$', t, text)
-        # match = re.search(r'[A-Z]+\s([A-Z]+)*')
         if match :
             fields["nameEn"] = match
             break   
@@ -70,9 +69,9 @@ def tw_card(text, box, fields):
     
     fields["nationality"] = "TW"
     for t in box:
-        match = re.search(r'(?:[A-Z]{3}|[\u4e00-\u9fff]{2,4})',t,re.I)
+        match = match_text_with_box(r'[\u4e00-\u9fff]+',t,text)
         if match:
-            fields["nationality"] = match.group(0).upper()
+            fields["nationality"] = match
             break
             
     return fields
@@ -102,12 +101,15 @@ def ch_card(text, box, fields):
     fields = field_date(box, fields)
     fields = field_gender(box, fields)
  
-    fields["nationality"] = "CN"
+    national_concat = []
     for t in box:
-        match = re.search(r'(?:[A-Z]{3}|[\u4e00-\u9fff]{2,4})',t,re.I)
-        if match :
-            fields["nationality"] = match.group(0).upper()
-            break
+        match = match_text_with_box(r'[\u4e00-\u9fff]{2,4}\s*/\s*[A-Z]{2,5}',t, text)
+        if match:
+            national_concat.append(match)
+    if len(national_concat) != 0:
+        fields["nationality"] = ",".join(national_concat)
+    else: 
+        fields["nationality"] = "CH"
     return fields
 
 # Singapor
