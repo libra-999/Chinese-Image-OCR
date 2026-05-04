@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI,  HTTPException, Body
 import numpy as np
 from PIL import Image
 from util.regex  import detect_country
@@ -6,13 +6,21 @@ from util.response import resp_ocr ,httpResp
 from service.easy_service import parseData
 import cv2
 from config.ocr_config import ocr_engin, get_reader
+from io import BytesIO
+import requests
 
 app = FastAPI()
 @app.post("/ocr/services")
 
-async def recognize(file: UploadFile = File(...)):
+async def recognize(file: dict = Body(...)):
     try:
-        image = Image.open(file.file).convert("RGB")
+
+        file_path = file.get("url")    
+        if not file_path:
+            raise HTTPException(status_code=400, detail="Cannot found filePath")
+        
+        response = requests.get(file_path)
+        image = Image.open(BytesIO(response.content)).convert("RGB")
         img_np = np.array(image)
 
         img_np = cv2.cvtColor(img_np, cv2.COLOR_RGB2BGR)

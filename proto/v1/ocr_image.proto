@@ -1,0 +1,29 @@
+syntax = "proto3"
+
+service ImageOCRService {
+    rpc UploadImageServer (UploadRequest) returns (ImageOCRResp) ;
+}
+
+# Request File 
+message UploadRequest {
+    bytes file = 1
+}
+
+# Response File
+message OCRData {
+    string idNumber = 1;
+    string nameZh = 2;
+    string nameEn = 3;
+    string gender = 4;
+    string dob = 5;
+    string nationality = 6;
+    string validFrom = 7;
+    string validTo = 8;
+    string address = 9;
+}
+
+
+message ImageOCRResp {
+    string country = 1;
+    OCRData fields = 2;
+}
