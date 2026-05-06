@@ -1,15 +1,15 @@
-syntax = "proto3"
+syntax = "proto3";
 
 service ImageOCRService {
     rpc UploadImageServer (UploadRequest) returns (ImageOCRResp) ;
 }
 
-# Request File 
+// Request File
 message UploadRequest {
-    bytes file = 1
+    bytes file = 1;
 }
 
-# Response File
+// Response File
 message OCRData {
     string idNumber = 1;
     string nameZh = 2;
@@ -21,7 +21,6 @@ message OCRData {
     string validTo = 8;
     string address = 9;
 }
-
 
 message ImageOCRResp {
     string country = 1;

@@ -24,7 +24,7 @@ async def convert_to_caeser_cipher(text , shift_number : int):
                 result += symbols[new_text]
             elif new_text in number:
                 index = number.index(new_text)
-                new_text = (index + shift_number) % total_dgit # 10 dgit
+                new_text = (index + shift_number) % total_dgit
                 result += number[new_text]
             elif new_text in lower_word:
                 index = lower_word.index(new_text)
