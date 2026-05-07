@@ -9,3 +9,8 @@ Box Data: ['REPUBLIC OF SINGAPORE', 'PASSPORT', 'Ipe', 'X2000444N', 'SGP', 'PA',
 
 Country: TW 
 Box Data: ['ROC (Taiwan) Resident Certificate', 'MULTIPLERE ENTRYPERMIT', '2008/10/01初领', 'A012345678', '女 Female', 'DANG THIKIM HONGI', 'I', '越南', '1969/01/01', '王甲乙', '2009/10118', '越南']
+
+// SIZE 
+ 
+Khmer Size:
+    ID : 

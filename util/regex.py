@@ -8,9 +8,9 @@ def detect_country (text: str):
         return "TW"
     if "HONGKONG" in t or "HONG KONG" in t:
         return "HK"
-    if "SINGAPOR" in t  or "PASSPORT" in t:
+    if "SINGAPOR" in t:
         return "SG"
-    if "CAN" in  t:
+    if "CAN" in t or "中文" in  t:
         return "CN"
     return 'UNKNOWN'
 
@@ -79,3 +79,8 @@ def reorder_by_line(results, gap=15):
         final.extend([item[1] for item in row["items"]])
 
     return final
+
+
+def crop_field_by_country (img ,coordinate):
+    x1,y1,x2,y2 = coordinate
+    return img[y1:y2, x1:x2]

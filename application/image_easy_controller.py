@@ -1,7 +1,6 @@
-from fastapi import FastAPI,  HTTPException, Body
+from fastapi import FastAPI,  HTTPException, Body , Header
 import numpy as np
 from PIL import Image
-from util.regex  import detect_country
 from util.response import resp_ocr ,httpResp
 from service.easy_service import parseData
 import cv2
@@ -11,12 +10,15 @@ import requests
 
 app = FastAPI()
 @app.post("/ocr/services")
-async def recognize(file: dict = Body(...)):
+async def recognize(file: dict = Body(...), country: str = Body(...)):
     try:
 
         file_path = file.get("url")    
-        if not file_path:
+    
+        if not file_path :
             raise HTTPException(status_code=400, detail="Cannot found filePath")
+        elif not country : 
+            raise HTTPException(status_code=400, detail="Cannot found country")
         
         response = requests.get(file_path)
         image = Image.open(BytesIO(response.content)).convert("RGB")
@@ -33,23 +35,21 @@ async def recognize(file: dict = Body(...)):
             gray = clahe.apply(gray)
         
         # improve scale image if it have small width
-        if w < 1200:
-            scale =  2.0
-        elif w < 1800:
-            scale =  1.3
-        else :
-            scale = 1.0
+        if w < 500 and h < 400:
+            scale =  2
+        elif w < 700 and h < 500:
+            scale  = 2.3
+        elif w < 1200 and h < 1000:
+            scale = 0.90
         gray = cv2.resize(gray, (int(w * scale), int(h * scale)), interpolation=cv2.INTER_CUBIC)
         
         # switch ocr lang by following country
         raw_text, boxes = client(gray, get_reader("simplified"))
-        country = detect_country(raw_text)
         if country in ["TW","HK"]:
             raw_text , boxes  = client(gray, get_reader("traditional"))
-            country = detect_country(raw_text)
         elif country in ["SG"]:
             raw_text , boxes  = client(gray, get_reader("latin"))
-            country = detect_country(raw_text) 
+            
             
         fields = parseData(country,raw_text,boxes)            
         return httpResp(200,"Succeed",resp_ocr(country,fields,boxes))

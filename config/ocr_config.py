@@ -14,6 +14,13 @@ OCR_CONFIG = {
     "low_text":0.15
 }
 
+# crop fields
+TEMPLATE = {
+    "CH": {
+        "name": (300, 120, 688, 255)
+    }
+}
+
 @lru_cache(maxsize=3) # store only 2 process , one is 'traditional' and other one is 'simplified'
 def get_reader(lang_code):
     if lang_code == "traditional":
