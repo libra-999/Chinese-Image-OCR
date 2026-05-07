@@ -5,13 +5,12 @@ from util.regex  import detect_country
 from util.response import resp_ocr ,httpResp
 from service.easy_service import parseData
 import cv2
-from config.ocr_config import ocr_engin, get_reader
+from config.ocr_config import get_reader, client
 from io import BytesIO
 import requests
 
 app = FastAPI()
 @app.post("/ocr/services")
-
 async def recognize(file: dict = Body(...)):
     try:
 
@@ -43,13 +42,13 @@ async def recognize(file: dict = Body(...)):
         gray = cv2.resize(gray, (int(w * scale), int(h * scale)), interpolation=cv2.INTER_CUBIC)
         
         # switch ocr lang by following country
-        raw_text, boxes = ocr_engin(gray, get_reader("simplified"))
+        raw_text, boxes = client(gray, get_reader("simplified"))
         country = detect_country(raw_text)
         if country in ["TW","HK"]:
-            raw_text , boxes  = ocr_engin(gray, get_reader("traditional"))
+            raw_text , boxes  = client(gray, get_reader("traditional"))
             country = detect_country(raw_text)
         elif country in ["SG"]:
-            raw_text , boxes  = ocr_engin(gray, get_reader("latin"))
+            raw_text , boxes  = client(gray, get_reader("latin"))
             country = detect_country(raw_text) 
             
         fields = parseData(country,raw_text,boxes)            

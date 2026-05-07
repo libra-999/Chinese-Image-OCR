@@ -48,3 +48,34 @@ def convert_to_date(date: str) :
     if date == "":
         return None
     return datetime.strptime(date, "%d-%m-%Y")
+
+# order field box left to right and top to bottom
+def get_xy(result):
+    box = result[0]
+    xs = [p[0] for p in box]
+    ys = [p[1] for p in box]
+    return min(xs), min(ys)
+
+def reorder_by_line(results, gap=15):
+    rows = []
+    for r in results:
+        x, y = get_xy(r)
+        found = False
+        for row in rows:
+            if abs(row["y"] - y) <= gap:
+                row["items"].append((x, r))
+                found = True
+                break
+        if not found:
+            rows.append({
+                "y": y,
+                "items": [(x, r)]
+            })
+
+    rows.sort(key=lambda row: row["y"])
+    final = []
+    for row in rows:
+        row["items"].sort(key=lambda t: t[0])   # left to right
+        final.extend([item[1] for item in row["items"]])
+
+    return final
