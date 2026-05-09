@@ -10,7 +10,7 @@ def detect_country (text: str):
         return "HK"
     if "SINGAPOR" in t:
         return "SG"
-    if "CAN" in t or "中文" in  t:
+    if "CN" in t or "中文" in  t:
         return "CN"
     return 'UNKNOWN'
 

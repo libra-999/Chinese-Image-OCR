@@ -1,7 +1,15 @@
 import string
-from fastapi import FastAPI , HTTPException
+from fastapi import UploadFile, File, APIRouter
+import cv2
+import numpy as np
+from util.exception import server_internal, not_found, bad_request
 
-app = FastAPI()
+router = APIRouter(
+    prefix="/test",
+    tags=["Tools"],
+    # responses={not_found(404,"Not Found")}
+)
+
 lower_word = string.ascii_lowercase # Get letter lowercase
 upper_word = string.ascii_uppercase # Get letter uppercase
 number = string.digits # Get number
@@ -10,7 +18,7 @@ total_letter = 26
 total_symbol = 32
 total_dgit = 10
 
-@app.post("/convert/caeser-cipher")
+@router.post("/caeser-cipher")
 async def convert_to_caeser_cipher(text , shift_number : int):
     try :
         caeser_value_new = list(text)
@@ -40,9 +48,9 @@ async def convert_to_caeser_cipher(text , shift_number : int):
             "Convert to Caeser Cipher": result
         }
     except Exception as e:
-        raise HTTPException(500, f"You get wrong letter english, message : {str(e)} ")
+        server_internal(500, f"You get wrong letter english, message : {str(e)} ")
     
-@app.post("/convert/normal-word")
+@router.post("/normal-word")
 async def from_caeser_cipher_to_text(caeser_cipher, shift_number : int):
     try :
         caeser_value_new = list(caeser_cipher)
@@ -73,5 +81,24 @@ async def from_caeser_cipher_to_text(caeser_cipher, shift_number : int):
             "Normal text": result
         }
     except Exception as e:
-        raise HTTPException(500,  f"You get wrong letter english, message : {str(e)} ")
+        server_internal(500, f"You get wrong letter english, message : {str(e)} ")
 
+@router.post("/measure/ruler")
+async def measure(file: UploadFile = File(...)):
+    image  = await file.read()
+    np_arr = np.frombuffer(image, np.uint8)
+    crop_img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+    crop_img = cv2.resize(crop_img, (1200,900))
+    x, y, w, h = cv2.selectROI(
+        "Select Field",
+        crop_img,
+        showCrosshair=True
+    )
+    
+    cv2.destroyAllWindows()
+    return {
+        "x1": int(x),
+        "y1": int(y),
+        "x2": int(x + w),
+        "y2": int(y + h)
+    }

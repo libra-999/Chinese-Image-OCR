@@ -5,7 +5,7 @@ def resp_ocr(country,ocr_data,box):
         "box": box
     }
     
-def httpResp (code, message, data): 
+def httpResp (code: int, message: str, data): 
     return {
         "code": code,
         "message": message,

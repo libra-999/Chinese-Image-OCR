@@ -2,6 +2,7 @@ from functools import lru_cache
 import easyocr
 from util.regex import reorder_by_line
 
+
 # confidential config to improve output
 OCR_CONFIG = {
     "paragraph":False,
@@ -16,19 +17,51 @@ OCR_CONFIG = {
 
 # crop fields
 TEMPLATE = {
-    "CH": {
-        "name": (300, 120, 688, 255)
+    "CN": {
+        "idNumber": (397, 681,945, 723),
+        "name": (165, 245, 580, 342),
+        "dob": (396, 373, 621, 451),
+        "gender": (166, 366, 269, 456),
+        "issuedDate": (169,617,554,650),
+        "country": (170, 513, 376, 556),
+    },
+    "TW": {
+        "idNumber": (781,744,1125,816),
+        "name": (62,426,601,514),
+        "dob": (318,604,704,670),
+        "gender": (868,617,1033,680),
+        "issuedDate": None,
+        "country": None
+
+    },
+    "SG": {
+        "idNumber": (102,136,777,196),
+        "name": (422,393,901,551),
+        "dob": (423,652,633,742),
+        "gender": (674,650,723,745),
+        "issuedDate": None,
+        "country": (430,760,620,839)
+    },
+    "HK": {
+        "idNumber": (820,781,1156,837),
+        "name": (63,181,474,319),
+        "dob": (466,454,776,564),
+        "gender": (778,507,856,571),
+        "issuedDate": (464,643,777,844),
+        "country": None
     }
 }
 
-@lru_cache(maxsize=3) # store only 2 process , one is 'traditional' and other one is 'simplified'
+@lru_cache(maxsize=4) # store only 2 process , one is 'traditional' and other one is 'simplified'
 def get_reader(lang_code):
     if lang_code == "traditional":
         return  easyocr.Reader(["ch_tra","en"], gpu=False) # tw , hk
     elif lang_code == "simplified":
         return easyocr.Reader(["ch_sim","en"], gpu=False) # cn
-    else: 
+    elif lang_code == "latin": 
         return easyocr.Reader(["en","ch_sim"], gpu=False) # sg
+    else: 
+        return easyocr.Reader(["en"], gpu=False)
 
 # engine
 def client(gray, reader):
@@ -45,10 +78,6 @@ def client(gray, reader):
         box = res[0]
         text = res[1].strip()
         conf = float(res[2])
-
-        # remove weak confidence garbage
-        if conf < 0.35:
-            continue
 
         if text:
             texts.append(text)
