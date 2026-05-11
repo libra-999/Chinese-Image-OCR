@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        label: 'docker-agent' // seperate docker's server
+    }
     environment {
         APP_IMAGE  = "xemon99/ocr-api"
         EXCEPTION_MSG = ""
@@ -68,42 +70,27 @@ def dockerBuildAndPush(imageName, version) {
                 credentialsId: 'docker-hub',
                 usernameVariable: 'DOCKER_USER',
                 passwordVariable: 'DOCKER_PASS',
-            ),
-            string(
-                credentialsId: 'app-server-ip',
-                variable: 'DOCKER_SERVER_IP'
-            ),
-            string(
-                credentialsId: 'app-server-user',
-                variable: 'DOCKER_SERVER_USER'
-            ),
-            file(
-                creadentialsId: 'rsa-app-server',
-                variable: 'RSA_KEY'
             )
         ]
     ) {
         if(env.VERSION ==~ /^dev-v.*/ || env.VERSION ==~ /^prod-v.*/ || env.VERSION ==~ /^uat-v.*/){
             sh """
-                ssh -i ${RSA_KEY} ${DOCKER_SERVER_USER}@${DOCKER_SERVER_IP} "
                   set -e
-                  echo '🐳 Building ${imageName}:${version}'
+                  echo "🐳 Building ${imageName}:${version}"
                   echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin
                   docker build -t ${imageName}:${version} .
                   docker tag ${imageName}:${version} ${imageName}:lts
                   docker push ${imageName}:${version}
                   docker push ${imageName}:lts
-                "
+                
             """
         }else if (env.VERSION ==~ /^v.*/){
             sh """
-                ssh -i ${RSA_KEY} ${DOCKER_SERVER_USER}@${DOCKER_SERVER_IP} "
                   set -e
-                  echo '🐳 Building ${imageName}:${version}'
+                  echo "🐳 Building ${imageName}:${version}"
                   echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin
                   docker build -t ${imageName}:${version} .
                   docker push ${imageName}:${version}
-                "
                """
         }
     }
