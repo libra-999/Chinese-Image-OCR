@@ -1,10 +1,11 @@
-from fastapi import Body , UploadFile, File , APIRouter
+from fastapi import Body , UploadFile, File , APIRouter, Form
 import numpy as np
 from PIL import Image
 from util.response import resp_ocr ,httpResp
 from util.regex import crop_field_by_country
 from service.easy_service_v2 import parse_data_v2
 from util.exception import server_internal , bad_request, not_found
+from model.enum.country_constant import CountryEnum
 
 import cv2
 from config.ocr_config import get_reader, client , TEMPLATE
@@ -18,19 +19,20 @@ router = APIRouter(
 )
 
 @router.post("/services")
-async def recognize(file: UploadFile = File(...), country: str = Body(...)):
+async def recognize(file: UploadFile = File(...), country: CountryEnum = Form(...)):
     try:
         # file_path = file.get("url")    
     
-        # if not file_path :
-        #     raise HTTPException(status_code=400, detail="Cannot found filePath")
-        # elif not country : 
-        #     raise HTTPException(status_code=400, detail="Cannot found country")
+        if file is None :
+            bad_request(400,"File cannot be null")
+        elif country not in CountryEnum or country is "": 
+            bad_request(400,"Country cannot be null")
         
         # response = requests.get(file_path)
         content = await file.read()
         image = Image.open(BytesIO(content)).convert("RGB")
         img_np = np.array(image)  
+        
         if img_np is None or img_np.size == 0:
             bad_request(400,"Num py is None")
                 
