@@ -14,6 +14,7 @@ async def main():
 
 app.include_router(
     csc_router.router,
+    include_in_schema=False, # no include in doc or redoc
     prefix="/v2/api"
 )
 app.include_router(

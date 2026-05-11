@@ -18,17 +18,19 @@ router = APIRouter(
 )
  
 @router.post("/services")
-async def recognize(file: dict = Body(...), country: CountryEnum = Body(...)):
+async def recognize(url: str = Body(...), country: CountryEnum = Body(...)):
     try: 
-        file_path = file.get("url")     
     
-        if file is None :
+        if not url:
             bad_request(400,"File cannot be null")
-        elif country not in CountryEnum or country is "": 
-            bad_request(400,"Country cannot be null")
+        try :
+            if not country :
+                bad_request(400,"Country cannot be null")
+            country = CountryEnum(country)
+        except ValueError:
+            bad_request(400,"Invalid country code, please provide correct country code from list : TW, HK, SG, CN, KH")
         
-        response = requests.get(file_path)
-        
+        response = requests.get(url)
         response.raise_for_status()  # check if url is valid 
         image = Image.open(BytesIO(response.content)).convert("RGB")
         img_np = np.array(image)  
