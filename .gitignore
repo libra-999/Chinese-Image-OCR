@@ -3,7 +3,7 @@ image_env
 __pycache__
 .DS_Store
 
-image_test
+image_test/*
 
 .idea
 .vscode
