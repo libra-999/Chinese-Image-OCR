@@ -12,25 +12,25 @@ from config.ocr_config import get_reader, client , TEMPLATE
 from io import BytesIO
 import requests
 
-router = APIRouter(
+router = APIRouter( 
     prefix="/ocr",
     tags=["OCR KYC"],
-    # responses={not_found(404,"Not Found")}
 )
-
+ 
 @router.post("/services")
-async def recognize(file: UploadFile = File(...), country: CountryEnum = Form(...)):
-    try:
-        # file_path = file.get("url")    
+async def recognize(file: dict = Body(...), country: CountryEnum = Body(...)):
+    try: 
+        file_path = file.get("url")     
     
         if file is None :
             bad_request(400,"File cannot be null")
         elif country not in CountryEnum or country is "": 
             bad_request(400,"Country cannot be null")
         
-        # response = requests.get(file_path)
-        content = await file.read()
-        image = Image.open(BytesIO(content)).convert("RGB")
+        response = requests.get(file_path)
+        
+        response.raise_for_status()  # check if url is valid 
+        image = Image.open(BytesIO(response.content)).convert("RGB")
         img_np = np.array(image)  
         
         if img_np is None or img_np.size == 0:
