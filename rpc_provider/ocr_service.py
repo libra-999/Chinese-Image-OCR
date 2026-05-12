@@ -57,15 +57,15 @@ class ImageOCRService(data_pb2_grpc.ImageOCRServiceServicer):
         
         fields = parse_data_v2(country,fields)
         ocr_fields = data_pb2.OCRData(
-            idNumber=fields.get("idNumber") or "",
-            nameZh=fields.get("nameZh") or "",
-            nameEn=fields.get("nameEn") or "",
-            gender=fields.get("gender") or "",
-            dob=fields.get("dob") or "",
-            nationality=fields.get("nationality") or "",
-            validFrom=fields.get("validFrom") or "",
-            validTo=fields.get("validTo") or "",
-            address=fields.get("address") or "",
+            idNumber=str(fields.get("idNumber") or ""),
+            nameZh=str(fields.get("nameZh") or ""),
+            nameEn=str(fields.get("nameEn") or ""),
+            gender=str(fields.get("gender") or ""),
+            dob=str(fields.get("dob") or ""),
+            nationality=str(fields.get("nationality") or ""),
+            validFrom=str(fields.get("validFrom") or ""),
+            validTo=str(fields.get("validTo") or ""),
+            address=str(fields.get("address") or ""),
         )
         return data_pb2.ImageOCRResp(
             country=country,
