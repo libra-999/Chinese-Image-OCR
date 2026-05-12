@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label: 'docker-agent' // seperate docker's server
+        label 'docker-agent' // seperate docker's server
     }
     environment {
         APP_IMAGE  = "xemon99/ocr-api"
