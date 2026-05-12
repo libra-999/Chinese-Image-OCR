@@ -6,20 +6,21 @@ service ImageOCRService {
 
 // Request File
 message UploadRequest {
-    bytes file = 1;
+    string url = 1;
+    string country = 2;
 }
 
 // Response File
 message OCRData {
-    string idNumber = 1;
-    string nameZh = 2;
-    string nameEn = 3;
-    string gender = 4;
-    string dob = 5;
-    string nationality = 6;
-    string validFrom = 7;
-    string validTo = 8;
-    string address = 9;
+    optional string idNumber = 1;
+    optional string nameZh = 2;
+    optional string nameEn = 3;
+    optional string gender = 4;
+    optional string dob = 5;
+    optional string nationality = 6;
+    optional string validFrom = 7;
+    optional string validTo = 8;
+    optional string address = 9;
 }
 
 message ImageOCRResp {

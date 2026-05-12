@@ -20,7 +20,7 @@ router = APIRouter(
 @router.post("/services")
 async def recognize(url: str = Body(...), country: CountryEnum = Body(...)):
     try: 
-    
+     
         if not url:
             bad_request(400,"File cannot be null")
         try :

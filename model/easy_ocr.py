@@ -5,7 +5,6 @@ ocr_data = {
     "gender":None,
     "dob": None,
     "nationality": None,
-    "passportNumber": None,
     "validFrom": None,
     "validTo": None,
     "address": None
