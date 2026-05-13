@@ -9,12 +9,13 @@ load_dotenv()
 WORKER = os.getenv("GRPC_WORKER",8)
 PORT = os.getenv("GRPC_PORT", 50051)
 
-def serveOCR():
+async def serveOCR():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=WORKER))
     data_pb2_grpc.add_ImageOCRServiceServicer_to_server(ImageOCRService(), server)
     server.add_insecure_port(f'[::]:{PORT}')
     server.start()
 
+    print(f"GRPC server is running on {PORT}")
     server.wait_for_termination()
     
 if __name__ == "__main__":

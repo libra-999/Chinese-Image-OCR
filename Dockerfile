@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM python:3.10-slim as builder
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
@@ -15,5 +15,10 @@ COPY package_v1.txt .
 RUN pip install --upgrade pip && pip install -r package_v1.txt
 
 COPY . .
-EXPOSE 7003
-CMD [ "uvicorn","main:app", "--host", "0.0.0.0", "--port","7003" ]
+# generate protobuf file
+RUN python -m grpc_tools.protoc -I=./proto/v1 --python_out=. --grpc_python_out=. v1/ocr_image.proto
+
+FROM python:3.10-slim
+WORKDIR /app 
+COPY --from=builder /app /app/
+CMD [ "python","main.py"]
