@@ -20,5 +20,10 @@ RUN python -m grpc_tools.protoc -I=./proto --python_out=. --grpc_python_out=. pr
 
 FROM python:3.10-slim
 WORKDIR /app  
+
 COPY --from=builder /app /app/
+COPY package_v1.txt .
+# upgrade pip version to avoid error version with package
+RUN pip install --upgrade pip && pip install -r package_v1.txt
+
 CMD [ "python","main.py"]
