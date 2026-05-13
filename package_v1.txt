@@ -8,3 +8,4 @@ RapidFuzz
 NumPy
 Pillow
 grpcio-tools
+dotenv
