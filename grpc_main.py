@@ -1,6 +1,5 @@
 from concurrent import futures
 import grpc
-import v1.ocr_image_pb2 as data_pb2
 import v1.ocr_image_pb2_grpc as data_pb2_grpc
 from rpc_provider.ocr_service import ImageOCRService
 import os
