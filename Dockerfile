@@ -1,4 +1,4 @@
-FROM python:3.10-slim as builder
+FROM python:3.10-slim AS builder
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
@@ -16,9 +16,9 @@ RUN pip install --upgrade pip && pip install -r package_v1.txt
 
 COPY . .
 # generate protobuf file
-RUN python -m grpc_tools.protoc -I=./proto/v1 --python_out=. --grpc_python_out=. v1/ocr_image.proto
+RUN python -m grpc_tools.protoc -I=./proto --python_out=. --grpc_python_out=. proto/v1/ocr_image.proto
 
 FROM python:3.10-slim
-WORKDIR /app 
+WORKDIR /app  
 COPY --from=builder /app /app/
 CMD [ "python","main.py"]
