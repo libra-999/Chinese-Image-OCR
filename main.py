@@ -4,6 +4,8 @@ import os
 from dotenv import load_dotenv
 from grpc_main import serveOCR
 from uvircorn_main import app
+import asyncio
+
 
 load_dotenv()
 PORT = int(os.getenv("APP_PORT", 7003))
@@ -20,14 +22,22 @@ async def server_fastapi():
     await uvicorn_server.serve()
     print(f"API server is running on {HOST}:{PORT}\n")
 
-# Run both as concurrently , but one of them didn't start other also failed to start
-def main():
+def server_grpc():
+    try:
+        serveOCR()
+    except Exception as e:
+        print(f"Uvicorn cannot running , msg {e}")
+        
+async def main():
     grpc_thread = threading.Thread(
-        target=serveOCR,
+        target=server_grpc,
         daemon=True # hang on even shutdown
     )
     grpc_thread.start()
-    server_fastapi()
+    try:
+        await server_fastapi()
+    except Exception as e:
+        print(f"Uvicorn cannot running , msg {e}")
   
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
