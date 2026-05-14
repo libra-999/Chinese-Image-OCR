@@ -9,3 +9,4 @@ NumPy
 Pillow
 grpcio-tools
 dotenv
+requests
