@@ -6,8 +6,8 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-WORKER = os.getenv("GRPC_WORKER",8)
-PORT = os.getenv("GRPC_PORT", 50051)
+WORKER = int(os.getenv("GRPC_WORKER",8))
+PORT = int(os.getenv("GRPC_PORT", 50051))
 
 async def serveOCR():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=WORKER))
