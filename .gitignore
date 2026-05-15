@@ -10,3 +10,5 @@ image_test/*
 
 v1/*
 docs/*
+
+.env
