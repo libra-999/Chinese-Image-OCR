@@ -1,18 +1,6 @@
 import re
 from datetime import datetime
 
-# Country Mode
-def detect_country (text: str):
-    t = text.upper()
-    if "TAIWAN" in t or "ARC" in t:
-        return "TW"
-    if "HONGKONG" in t or "HONG KONG" in t:
-        return "HK"
-    if "SINGAPOR" in t:
-        return "SG"
-    if "CN" in t or "中文" in  t:
-        return "CN"
-    return 'UNKNOWN'
 
 # fullmatch check 
 def match_text_with_box(regex, box_text , standard_text ) :
