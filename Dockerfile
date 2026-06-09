@@ -19,4 +19,4 @@ COPY . .
 # generate protobuf file
 RUN python -m grpc_tools.protoc -I=./proto --python_out=. --grpc_python_out=. proto/v1/ocr_image.proto
 
-CMD [ "python","main.py"]
+CMD [ "python","grpc_main.py"]
