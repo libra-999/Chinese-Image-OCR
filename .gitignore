@@ -12,3 +12,4 @@ v1/*
 docs/*
 
 .env
+Jenkinsfile
